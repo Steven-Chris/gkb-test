@@ -34,7 +34,7 @@ module.exports.login = async (req, res) => {
       req.body.mobile,
       req.body.password
     );
-
+    console.log(req.body);
     const { name, _id } = user;
     const ac_token = await user.generateACToken();
     const ref_token = await user.generateREFToken();
@@ -50,7 +50,7 @@ module.exports.login = async (req, res) => {
 
 module.exports.getAllUsers = async (req, res) => {
   try {
-    const users = await User.find().select([
+    const users = await User.find({ ac_token: { $ne: null } }).select([
       "name",
       "mobile",
       "latitude",
@@ -77,6 +77,7 @@ module.exports.logout = async (req, res) => {
     req.user.ac_token = null;
     req.user.ref_token = null;
     await req.user.save();
+    console.log(req.user);
     return res.json({ message: "Logged out " });
   } catch (e) {
     res.status(500).send(e);

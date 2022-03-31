@@ -101,8 +101,8 @@ userSchema.methods.generateREFToken = async function () {
   return token;
 };
 
-userSchema.statics.findByCredentials = async (email, password) => {
-  const user = await User.findOne({ email });
+userSchema.statics.findByCredentials = async (mobile, password) => {
+  const user = await User.findOne({ mobile });
 
   if (!user) {
     throw new Error("Unable to login");
