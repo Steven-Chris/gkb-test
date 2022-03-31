@@ -6,7 +6,6 @@ module.exports.AC_auth = async (req, res, next) => {
   try {
     const token = req.header("Authorization").replace("Bearer ", "");
     const decoded = jwt.verify(token, process.env.AC_TOKEN_SECRET);
-    console.log(decoded);
     const user = await User.findOne({
       _id: decoded.user._id,
       ac_token: token,
@@ -27,6 +26,21 @@ module.exports.AC_auth = async (req, res, next) => {
   }
 };
 
+module.exports.adminOnly = async (req, res, next) => {
+  try {
+    const { role } = req.user;
+    console.log(role);
+    if (role !== "admin") {
+      throw new Error();
+    }
+    next();
+  } catch (e) {
+    res.status(401).json({
+      status: constantConfig.ERROR,
+      message: constantConfig.FORBIDDEN_REQUEST,
+    });
+  }
+};
 module.exports.REF_auth = async (req, res, next) => {
   try {
     const token = req.header("Authorization").replace("Bearer ", "");

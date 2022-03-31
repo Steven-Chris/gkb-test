@@ -12,7 +12,6 @@ module.exports.signUp = async (req, res) => {
     });
   }
   const user = new User(req.body);
-  console.log(user);
   try {
     await user.save();
     const { name, _id } = user;
@@ -50,7 +49,7 @@ module.exports.login = async (req, res) => {
 
 module.exports.getAllUsers = async (req, res) => {
   try {
-    const users = await User.find({ ac_token: { $ne: null } }).select([
+    const users = await User.find().select([
       "name",
       "mobile",
       "latitude",
@@ -77,13 +76,14 @@ module.exports.logout = async (req, res) => {
     req.user.ac_token = null;
     req.user.ref_token = null;
     await req.user.save();
-    console.log(req.user);
     return res.json({ message: "Logged out " });
   } catch (e) {
     res.status(500).send(e);
   }
 };
 
-module.exports.me = async (req, res) => {
-  res.send(req.user);
+module.exports.currentUser = async (req, res) => {
+  res
+    .status(constantConfig.SUCCESS_CODE)
+    .json({ status: constantConfig.SUCCESS, user: req.user });
 };
